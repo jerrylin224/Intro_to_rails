@@ -14,7 +14,9 @@ rails s
 
 註：建立一個簡單的資料庫（表格）=>你可以仔細闡述資料庫跟表格的關係嗎？
 
-  rails generate scaffold topic title:string description
+```ruby
+rails generate scaffold topic title:string description
+```
 
 解釋：
 1.generate scaffold，告訴rails建立一個操作topics功能下所需的所有檔案
@@ -45,7 +47,7 @@ config中的routes.rb檔就是來處理路徑問題的
 問：但是這邊比較confuse的是，routes跟draw分別是？
 ```ruby
 Rails.application.routes.draw do
-    root ‘topics#index’
+  root ‘topics#index’
 end
 ```
 
@@ -58,7 +60,7 @@ has_many & belongs_to：這兩個是用以設定不同model（table）之間的�
 1. has_many 所以一個topic has many votes，就要設定成
 ```ruby
 class Topic < ApplicationRecord
-    has_many :votes, dependent: :destroy 
+  has_many :votes, dependent: :destroy 
 end
 ```
 而後面的dependent: :destroy代表topic instance被刪除時，它所擁有的votes就會被一併刪掉，如果沒有這樣設定的話這些資料就有可能被默默地留在database裡...（這類似SQL中的on delete cascade）
@@ -66,7 +68,7 @@ end
 2. belongs_to 而每一個vote都belongs to a topic，就要設定成
 ```ruby
 class Vote < ApplicationRecord
-    belongs_to :topic
+  belongs_to :topic
 end
 ```
 
@@ -75,9 +77,9 @@ end
 步驟一：在topic新增一個up_vote action
 ```ruby
 def upvote
-    @topic = Topic.find(params[:id])
-    @topic.votes.create
-    redirect_to topics_path
+  @topic = Topic.find(params[:id])
+  @topic.votes.create
+  redirect_to topics_path
 end
 ```
 @topic = Topic.find(params[:id]，透過包含在request中的params hash，找出對應的topic id，並將對應該id的topic資料儲存在@topic中
@@ -87,9 +89,9 @@ end
 更改resources :topics成
 ```ruby
 resources :topics do
-    members do
-        post ‘upvote’
-    end
+  members do
+      post ‘upvote’
+  end
 end
 ```
 註：這基本上就是透過block，幫助upvote設定了一個新的路徑
@@ -98,8 +100,8 @@ end
 步驟三：在view上新增一個按鈕
 在app/views/topics/index.html.erb中加入兩行程式碼
 ```ruby
-  <td><%= pluralize(topic.votes.count, “vote" %></td>
-  <td><%= button_to ‘+1’, up vote_topic_path(topic), method: :post %></td>
+<td><%= pluralize(topic.votes.count, “vote" %></td>
+<td><%= button_to ‘+1’, up vote_topic_path(topic), method: :post %></td>
 ```
 解釋：
 1.pluralize(topic.votes.count, “vote”)可以藉由判斷前面變數的數量來顯示單數的”vote”或是複數的”votes"
@@ -117,8 +119,8 @@ format.html { redirect_to @topic, notice: 'Topic was successfully created.' }
 建立新文章後導回到文章列表
 修改以下路徑的@topic
 ```html
-  format.html { redirect_to @topic, notice: 'Topic was successfully created.' } 
-  format.json { render :show, status: :created, location: @topic }
+format.html { redirect_to @topic, notice: 'Topic was successfully created.' } 
+format.json { render :show, status: :created, location: @topic }
 ```
 改成topics_path
 ```erb
@@ -138,8 +140,8 @@ notice: “message”，代表flash message，會顯示在導回的頁面上
 <td><%= topic.title %></td>
 ```
 改成
-```ruby
-  <td><%= link_to topic.title, topic %></td>
+```html
+<td><%= link_to topic.title, topic %></td>
 ```
 解釋：
 其實就是利用link_to 來設定anchor，topic.title就是anchor text，topic就是href的路徑
@@ -151,8 +153,8 @@ notice: “message”，代表flash message，會顯示在導回的頁面上
 在controller的部分加入了downvote這個action
 ```ruby
 def downvote
-    @topic = Topic.find(parmas[:id]
-    @topic.votes.last.destroy
+  @topic = Topic.find(parmas[:id]
+  @topic.votes.last.destroy
 end
 ```
 註：目前還不確定TopicsController實際的各項instance method怎麼運作，但是可以想像@topic.votes會列出一個array中的所有值，而last或是first可以挑出其中一個值並執行destroy，藉此達成扣分的按鈕
