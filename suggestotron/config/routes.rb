@@ -5,6 +5,9 @@ Rails.application.routes.draw do
     member do
       post 'upvote'
     end
+    member do
+      post 'downvote'
+    end
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

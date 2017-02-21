@@ -1,3 +1,4 @@
+# require 'pry'
 class TopicsController < ApplicationController
   before_action :set_topic, only: [:show, :edit, :update, :destroy]
 
@@ -64,7 +65,13 @@ class TopicsController < ApplicationController
   def upvote
     @topic = Topic.find(params[:id])
     @topic.votes.create
-    redirect_to topic_path
+    redirect_to topics_path
+  end
+
+  def downvote
+    @topic = Topic.find(params[:id])
+    @topic.votes.last.destroy
+    redirect_to topics_path
   end
 
   private
